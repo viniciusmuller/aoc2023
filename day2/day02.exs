@@ -54,15 +54,8 @@ defmodule Day02.Part2 do
 
   defp cubes_power("Game " <> rest) do
     {_id, ": " <> game} = Integer.parse(rest)
-    bags = String.split(game, "; ")
-
-    result =
-      Enum.reduce(bags, %{}, fn bag, acc ->
-        bag
-        |> String.split(", ")
-        |> Enum.reduce(acc, &count_colors_in_set/2)
-      end)
-
+    rolls = String.split(game, ["; ", ", "], trim: true)
+    result = Enum.reduce(rolls, %{}, &count_colors_in_set/2)
     result["green"] * result["blue"] * result["red"]
   end
 
