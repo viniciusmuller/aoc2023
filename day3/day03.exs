@@ -74,7 +74,7 @@ defmodule Day03.Part2 do
       lines
       |> Enum.with_index()
       |> Enum.reduce({MapSet.new(), %{}}, fn {line, y_position}, acc ->
-        count_digits(line, 0, y_position, acc)
+        track_numbers_and_gears(line, 0, y_position, acc)
       end)
 
     gears_neighbors = track_gears_neighbors(gears, numbers)
@@ -84,7 +84,7 @@ defmodule Day03.Part2 do
     end
   end
 
-  def count_digits(
+  def track_numbers_and_gears(
         <<char::utf8, _rest::binary>> = input,
         x_position,
         y_position,
@@ -94,19 +94,19 @@ defmodule Day03.Part2 do
     {number, rest} = Integer.parse(input)
     length = get_total_digits(number, 1)
     updated_numbers = Map.put(numbers, {x_position, y_position}, number)
-    count_digits(rest, x_position + length, y_position, {gears, updated_numbers})
+    track_numbers_and_gears(rest, x_position + length, y_position, {gears, updated_numbers})
   end
 
-  def count_digits(<<"*", rest::binary>>, x_position, y_position, {gears, numbers}) do
+  def track_numbers_and_gears(<<"*", rest::binary>>, x_position, y_position, {gears, numbers}) do
     updated_gears = MapSet.put(gears, {x_position, y_position})
-    count_digits(rest, x_position + 1, y_position, {updated_gears, numbers})
+    track_numbers_and_gears(rest, x_position + 1, y_position, {updated_gears, numbers})
   end
 
-  def count_digits(<<_other::utf8, rest::binary>>, x_position, y_position, acc) do
-    count_digits(rest, x_position + 1, y_position, acc)
+  def track_numbers_and_gears(<<_other::utf8, rest::binary>>, x_position, y_position, acc) do
+    track_numbers_and_gears(rest, x_position + 1, y_position, acc)
   end
 
-  def count_digits(<<>>, _, _, acc), do: acc
+  def track_numbers_and_gears(<<>>, _, _, acc), do: acc
 
   def get_total_digits(number, digits) when number >= 10 do
     get_total_digits(number / 10, digits + 1)
